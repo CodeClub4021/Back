@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choose Your Method you want</title>
+</head>
+<body>
+    <h1>Choose Your Role</h1>
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <label>
+            <input type="radio" name="user_method" value="login">
+            login
+        </label>
+        <br>
+        <label>
+            <input type="radio" name="user_method" value="signup">
+            signup
+        </label>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
