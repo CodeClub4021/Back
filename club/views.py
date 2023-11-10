@@ -10,6 +10,8 @@ def choose_view(request):
 
         if user_type == 'admin':
             return redirect('choose_method')
+        elif user_type == 'coach':
+            return redirect('choose_method')
         elif user_type == 'user':
             return redirect('choose_method')
         else:
