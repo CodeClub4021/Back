@@ -1,0 +1,7 @@
+<!-- myapp/templates/myapp/gym_list.html -->
+<h2>Gym List</h2>
+<ul>
+  {% for gym in gyms %}
+    <li><a href="{% url 'gym_detail' pk=gym.pk %}">{{ gym.name }}</a></li>
+  {% endfor %}
+</ul>

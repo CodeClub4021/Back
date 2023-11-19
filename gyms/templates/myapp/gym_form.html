@@ -1,0 +1,7 @@
+<!-- myapp/templates/myapp/gym_form.html -->
+<h2>Create/Update Gym</h2>
+<form method="post" action="{% if form.instance.pk %}{% url 'gym_update' pk=form.instance.pk %}{% else %}{% url 'gym_create' %}{% endif %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+</form>
