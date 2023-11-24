@@ -1,3 +1,24 @@
 <!-- myapp/templates/myapp/gym_detail.html -->
 <h2>{{ gym.name }}</h2>
-<p>{{ gym.address }}</p>
+<p>Address: {{ gym.address }}</p>
+<p>Average Rating: {{ gym.average_rating }}</p>
+
+<!-- Display existing ratings -->
+<h3>Existing Ratings:</h3>
+<ul>
+  {% for rating in gym.ratings.all %}
+    <li>{{ rating.rating }}</li>
+  {% endfor %}
+</ul>
+
+<!-- Add a form to submit a new rating -->
+<form method="post" action="{% url 'gym_detail' pk=gym.pk %}">
+  {% csrf_token %}
+  <label for="id_rating">Your Rating (1-6):</label>
+  <input type="number" name="rating" min="1" max="6" required>
+  <button type="submit">Submit Rating</button>
+</form>
+
+<!-- Add links to other views if needed -->
+<a href="{% url 'gym_update' pk=gym.pk %}">Update Gym</a>
+<a href="{% url 'gym_list' %}">Back to Gym List</a>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Gym
-from .forms import GymForm
+from .models import Gym, Rating
+from .forms import GymForm, RatingForm
 
 def gym_list(request):
     gyms = Gym.objects.all()
@@ -8,7 +8,17 @@ def gym_list(request):
 
 def gym_detail(request, pk):
     gym = get_object_or_404(Gym, pk=pk)
-    return render(request, 'myapp/gym_detail.html', {'gym': gym})
+
+    if request.method == 'POST':
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            rating = form.save(commit=False)
+            rating.gym = gym
+            rating.save()
+
+    form = RatingForm()
+
+    return render(request, 'myapp/gym_detail.html', {'gym': gym, 'form': form})
 
 def gym_create(request):
     if request.method == 'POST':
