@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'club',
     'gyms',
+    'coach',
 ]
 
 AUTHENTICATION_BACKENDS = [

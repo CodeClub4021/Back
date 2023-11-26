@@ -7,7 +7,7 @@ class UserProfile(models.Model):
     gyms = models.ManyToManyField('Gym', related_name='memberships')
 """
 
-class Gym(models.Model):
+class Coach(models.Model):
     RATING_CHOICES = [
         (1, '1'),
         (2, '2'),
@@ -16,9 +16,9 @@ class Gym(models.Model):
         (5, '5'),
     ]
 
-    name = models.CharField(max_length=255, unique=True)
+    """name = models.CharField(max_length=255, unique=True)
     address = models.TextField()
-    """rate = models.DecimalField(
+    rate = models.DecimalField(
         max_digits=1,
         decimal_places=0,
         validators=[MinValueValidator(1), MaxValueValidator(5)],
@@ -39,8 +39,8 @@ class Gym(models.Model):
         return self.name
 
 class Rating(models.Model):
-    gym = models.ForeignKey(Gym, related_name='ratings', on_delete=models.CASCADE)
+    coach = models.ForeignKey(Coach, related_name='ratings', on_delete=models.CASCADE)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     def __str__(self):
-        return f"{self.gym.name} - {self.rating}"
+        return f"{self.coach.name} - {self.rating}"
