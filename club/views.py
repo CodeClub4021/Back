@@ -56,7 +56,6 @@ def login_view(request):
 def loginsuc(request):
     return render(request, 'login_success.html')
 
-
 @login_required
 def edit_manager(request):
     if request.method == 'POST':
