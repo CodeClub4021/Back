@@ -8,5 +8,5 @@ urlpatterns = [
     path('club/loginsuc/', views.loginsuc, name='loginsuc'),
     path('club/choose/', choose_view, name='choose'),
     path('club/choose_method/', choose_method, name='choose_method'),
-
+    path('club/edit_manager/', views.edit_manager, name='edit_manager'),
 ]

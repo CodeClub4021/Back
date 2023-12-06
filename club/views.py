@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
-
+from django.contrib.auth.decorators import login_required 
+from .forms import ManagerEditForm 
 
 def choose_view(request):
     if request.method == 'POST':
@@ -54,3 +55,16 @@ def login_view(request):
 
 def loginsuc(request):
     return render(request, 'login_success.html')
+
+
+@login_required
+def edit_manager(request):
+    if request.method == 'POST':
+        form = ManagerEditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.cleaned_data['email'] = request.user.email
+            form.save()
+            return redirect('edit_manager') 
+    else:
+        form = ManagerEditForm(instance=request.user)
+    return render(request, 'edit_manager.html', {'form': form})
