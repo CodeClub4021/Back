@@ -1,12 +1,10 @@
+# gym_app/urls.py
 from django.urls import path
-from . import views
-from .views import choose_view, choose_method
+from .views import UserSignUpView, UserLoginView
+
 
 urlpatterns = [
-    path('club/signup/', views.signup, name= 'signup'),
-    path('club/login/', views.login_view, name= 'login'),
-    path('club/loginsuc/', views.loginsuc, name='loginsuc'),
-    path('club/choose/', choose_view, name='choose'),
-    path('club/choose_method/', choose_method, name='choose_method'),
-    path('club/edit_manager/', views.edit_manager, name='edit_manager'),
+    path('signup/', UserSignUpView.as_view(), name='user-signup'),
+    path('login/', UserLoginView.as_view(), name='user-login'),
 ]
+#     path('club/edit_manager/', views.edit_manager, name='edit_manager'),
