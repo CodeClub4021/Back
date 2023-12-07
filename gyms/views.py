@@ -1,47 +1,97 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Gym, Rating
-from .forms import GymForm, RatingForm
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
+from .models import CustomUser, Gym, GymRating
+from .serializers import GymSerializer, GymRatingSerializer
 
-def gym_list(request):
-    gyms = Gym.objects.all()
-    return render(request, 'myapp/gym_list.html', {'gyms': gyms})
 
-def gym_detail(request, pk):
-    gym = get_object_or_404(Gym, pk=pk)
 
-    if request.method == 'POST':
-        form = RatingForm(request.POST)
-        if form.is_valid():
-            rating = form.save(commit=False)
-            rating.gym = gym
-            rating.save()
+class GymView(generics.ListCreateAPIView):
+    queryset = Gym.objects.all()
+    serializer_class = GymSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    form = RatingForm()
+    def perform_create(self, serializer):
+        serializer.save(manager=self.request.user)
 
-    return render(request, 'myapp/gym_detail.html', {'gym': gym, 'form': form})
+class GymDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Gym.objects.all()
+    serializer_class = GymSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-def gym_create(request):
-    if request.method == 'POST':
-        form = GymForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('gym_list')
-    else:
-        form = GymForm()
-    return render(request, 'myapp/gym_form.html', {'form': form})
+    def perform_update(self, serializer):
+        if self.request.user != serializer.instance.manager and self.request.user not in serializer.instance.coaches.all():
+            raise PermissionDenied("You do not have permission to perform this action.")
+        serializer.save()
 
-def gym_update(request, pk):
-    gym = get_object_or_404(Gym, pk=pk)
-    if request.method == 'POST':
-        form = GymForm(request.POST, instance=gym)
-        if form.is_valid():
-            form.save()
-            return redirect('gym_list')
-    else:
-        form = GymForm(instance=gym)
-    return render(request, 'myapp/gym_form.html', {'form': form})
+    def perform_destroy(self, instance):
+        if self.request.user != instance.manager:
+            raise PermissionDenied("You do not have permission to perform this action.")
+        instance.delete()
 
-def gym_delete(request, pk):
-    gym = get_object_or_404(Gym, pk=pk)
-    gym.delete()
-    return redirect('gym_list')
+class GymRatingView(generics.CreateAPIView):
+    queryset = GymRating.objects.all()
+    serializer_class = GymRatingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class GymRatingView(generics.CreateAPIView):
+    queryset = GymRating.objects.all()
+    serializer_class = GymRatingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+
+# from django.shortcuts import render, get_object_or_404, redirect
+# from .models import Gym, Rating
+# from .forms import GymForm, RatingForm
+
+# def gym_list(request):
+#     gyms = Gym.objects.all()
+#     return render(request, 'myapp/gym_list.html', {'gyms': gyms})
+
+# def gym_detail(request, pk):
+#     gym = get_object_or_404(Gym, pk=pk)
+
+#     if request.method == 'POST':
+#         form = RatingForm(request.POST)
+#         if form.is_valid():
+#             rating = form.save(commit=False)
+#             rating.gym = gym
+#             rating.save()
+
+#     form = RatingForm()
+
+#     return render(request, 'myapp/gym_detail.html', {'gym': gym, 'form': form})
+
+# def gym_create(request):
+#     if request.method == 'POST':
+#         form = GymForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('gym_list')
+#     else:
+#         form = GymForm()
+#     return render(request, 'myapp/gym_form.html', {'form': form})
+
+# def gym_update(request, pk):
+#     gym = get_object_or_404(Gym, pk=pk)
+#     if request.method == 'POST':
+#         form = GymForm(request.POST, instance=gym)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('gym_list')
+#     else:
+#         form = GymForm(instance=gym)
+#     return render(request, 'myapp/gym_form.html', {'form': form})
+
+# def gym_delete(request, pk):
+#     gym = get_object_or_404(Gym, pk=pk)
+#     gym.delete()
+#     return redirect('gym_list')
