@@ -1,16 +1,40 @@
 from django.db import models
-from users.models import CustomUser  
+from users.models import CustomUser
+
 
 class Gym(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
-    manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='managed_gyms')
-    coaches = models.ManyToManyField(CustomUser, related_name='coached_gyms', blank=True)
+    city = models.CharField(max_length=255, default='YourDefaultCity')
+    manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='managed_gym', limit_choices_to={'role': 'manager'}, default=1)
+    coaches = models.ManyToManyField(CustomUser, related_name='coached_gyms', limit_choices_to={'role': 'coach'})
 
-class GymRating(models.Model):
+    def __str__(self):
+        return self.name
+
+
+class Rating(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='ratings')
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     rating = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.gym.name} - {self.rating}'
+
+
+
+# # from django.db import models
+# # from users.models import CustomUser  
+
+# # class Gym(models.Model):
+# #     name = models.CharField(max_length=100)
+# #     address = models.CharField(max_length=255)
+# #     manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='managed_gyms')
+# #     coaches = models.ManyToManyField(CustomUser, related_name='coached_gyms', blank=True)
+
+# # class GymRating(models.Model):
+# #     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='ratings')
+# #     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+# #     rating = models.IntegerField()
 
 
 # from django.db import models

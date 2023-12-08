@@ -1,11 +1,23 @@
 from django.urls import path
-from .views import GymView, GymDetailView, GymRatingView
+from .views import GymListCreateView, GymDetailView, RatingCreateView, RatingListView
 
 urlpatterns = [
-    path('gyms/', GymView.as_view(), name='gym-list'),
+    path('gyms/', GymListCreateView.as_view(), name='gym-list-create'),
     path('gyms/<int:pk>/', GymDetailView.as_view(), name='gym-detail'),
-    path('rate-gym/', GymRatingView.as_view(), name='rate-gym'),
+    path('gyms/<int:pk>/ratings/', RatingCreateView.as_view(), name='rating-create'),
+    path('ratings/', RatingListView.as_view(), name='rating-list'),
 ]
+
+
+
+# # from django.urls import path
+# # from .views import GymView, GymDetailView, GymRatingView
+
+# # urlpatterns = [
+# #     path('gyms/', GymView.as_view(), name='gym-list'),
+# #     path('gyms/<int:pk>/', GymDetailView.as_view(), name='gym-detail'),
+# #     path('rate-gym/', GymRatingView.as_view(), name='rate-gym'),
+# # ]
 
 
 

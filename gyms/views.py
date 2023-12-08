@@ -1,50 +1,77 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from .models import CustomUser, Gym, GymRating
-from .serializers import GymSerializer, GymRatingSerializer
+from .models import Gym, Rating
+from .serializers import GymSerializer, RatingSerializer
+from .forms import GymForm, RatingForm
 
-
-
-class GymView(generics.ListCreateAPIView):
+class GymListCreateView(generics.ListCreateAPIView):
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(manager=self.request.user)
 
 class GymDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Gym.objects.all()
     serializer_class = GymSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-    def perform_update(self, serializer):
-        if self.request.user != serializer.instance.manager and self.request.user not in serializer.instance.coaches.all():
-            raise PermissionDenied("You do not have permission to perform this action.")
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        if self.request.user != instance.manager:
-            raise PermissionDenied("You do not have permission to perform this action.")
-        instance.delete()
-
-class GymRatingView(generics.CreateAPIView):
-    queryset = GymRating.objects.all()
-    serializer_class = GymRatingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class RatingCreateView(generics.CreateAPIView):
+    serializer_class = RatingSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        gym_pk = self.kwargs.get('pk')
+        gym = get_object_or_404(Gym, pk=gym_pk)
+        serializer.save(gym=gym)
 
-class GymRatingView(generics.CreateAPIView):
-    queryset = GymRating.objects.all()
-    serializer_class = GymRatingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class RatingListView(generics.ListAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+    
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+# # from rest_framework import generics, permissions, status
+# # from rest_framework.response import Response
+# # from rest_framework.authtoken.models import Token
+# # from django.contrib.auth import authenticate
+# # from .models import CustomUser, Gym, GymRating
+# # from .serializers import GymSerializer, GymRatingSerializer
+
+
+
+# # class GymView(generics.ListCreateAPIView):
+# #     queryset = Gym.objects.all()
+# #     serializer_class = GymSerializer
+# #     permission_classes = [permissions.IsAuthenticated]
+
+# #     def perform_create(self, serializer):
+# #         serializer.save(manager=self.request.user)
+
+# # class GymDetailView(generics.RetrieveUpdateDestroyAPIView):
+# #     queryset = Gym.objects.all()
+# #     serializer_class = GymSerializer
+# #     permission_classes = [permissions.IsAuthenticated]
+
+# #     def perform_update(self, serializer):
+# #         if self.request.user != serializer.instance.manager and self.request.user not in serializer.instance.coaches.all():
+# #             raise PermissionDenied("You do not have permission to perform this action.")
+# #         serializer.save()
+
+# #     def perform_destroy(self, instance):
+# #         if self.request.user != instance.manager:
+# #             raise PermissionDenied("You do not have permission to perform this action.")
+# #         instance.delete()
+
+# # class GymRatingView(generics.CreateAPIView):
+# #     queryset = GymRating.objects.all()
+# #     serializer_class = GymRatingSerializer
+# #     permission_classes = [permissions.IsAuthenticated]
+
+# #     def perform_create(self, serializer):
+# #         serializer.save(user=self.request.user)
+
+# # class GymRatingView(generics.CreateAPIView):
+# #     queryset = GymRating.objects.all()
+# #     serializer_class = GymRatingSerializer
+# #     permission_classes = [permissions.IsAuthenticated]
+
+# #     def perform_create(self, serializer):
+# #         serializer.save(user=self.request.user)
 
 
 
