@@ -1,8 +1,12 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Gym, Rating
-from .serializers import GymSerializer, RatingSerializer
+from .serializers import GymSerializer, RatingSerializer, CoachCreateSerializer
+from rest_framework.permissions import IsAuthenticated
 from .forms import GymForm, RatingForm
+from django.shortcuts import get_object_or_404
+
+
 
 class GymListCreateView(generics.ListCreateAPIView):
     queryset = Gym.objects.all()
@@ -24,6 +28,25 @@ class RatingListView(generics.ListAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     
+
+class CoachCreateView(generics.CreateAPIView):
+    queryset = Gym.objects.all()
+    serializer_class = CoachCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        gym_pk = self.kwargs.get('pk')
+        gym = get_object_or_404(Gym, pk=gym_pk)
+
+        if self.request.user != gym.manager:
+            return Response({"detail": "You do not have permission to add coaches to this gym."}, status=status.HTTP_403_FORBIDDEN)
+
+        coach_username = serializer.validated_data.get('coach_username')
+        coach = get_object_or_404(CustomUser, username=coach_username)
+
+        gym.coaches.add(coach)
+        return Response({"detail": "Coach added successfully."}, status=status.HTTP_201_CREATED)
+
 
 # # from rest_framework import generics, permissions, status
 # # from rest_framework.response import Response

@@ -23,7 +23,8 @@ class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         fields = '__all__'
-
+class CoachCreateSerializer(serializers.Serializer):
+    coach_username = serializers.CharField()
 
 
 # from rest_framework import serializers
