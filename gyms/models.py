@@ -18,6 +18,7 @@ class Gym(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     address = models.TextField()
+    image = models.ImageField(upload_to='gym_images/', null=True, blank=True)
     """rate = models.DecimalField(
         max_digits=1,
         decimal_places=0,
