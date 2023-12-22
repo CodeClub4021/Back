@@ -8,15 +8,17 @@ from .models import Gym, Rating
 class GymSerializer(serializers.ModelSerializer):
     manager = serializers.SlugRelatedField(queryset=CustomUser.objects.all(), slug_field='username')
     coaches = serializers.SlugRelatedField(queryset=CustomUser.objects.all(), slug_field='username', many=True)
-
     class Meta:
         model = Gym
         fields = ['name', 'address', 'city', 'manager', 'coaches']
 
     def create(self, validated_data):
-        coaches_data = validated_data.pop('coaches')
+        coaches_data = validated_data.pop('coaches', [])
         gym = Gym.objects.create(**validated_data)
-        gym.coaches.set(coaches_data)
+        for coach_data in coaches_data:
+            coach, _ = CustomUser.objects.get_or_create(username=coach_data['username'])
+            gym.coaches.add(coach)
+
         return gym
 
 class RatingSerializer(serializers.ModelSerializer):

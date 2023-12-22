@@ -42,11 +42,14 @@ class CoachCreateView(generics.CreateAPIView):
             return Response({"detail": "You do not have permission to add coaches to this gym."}, status=status.HTTP_403_FORBIDDEN)
 
         coach_username = serializer.validated_data.get('coach_username')
-        coach = get_object_or_404(CustomUser, username=coach_username)
+        coach, created = CustomUser.objects.get_or_create(username=coach_username)
+
+        if created:
+            # If the coach is newly created, you may want to set additional properties here
+            pass
 
         gym.coaches.add(coach)
         return Response({"detail": "Coach added successfully."}, status=status.HTTP_201_CREATED)
-
 
 # # from rest_framework import generics, permissions, status
 # # from rest_framework.response import Response
