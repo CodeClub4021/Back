@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from .forms import GymForm, RatingForm
 from django.shortcuts import get_object_or_404
 from gyms.models import CustomUser
-
+#1
 
 class GymListCreateView(generics.ListCreateAPIView):
     queryset = Gym.objects.all()
