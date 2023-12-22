@@ -1,34 +1,33 @@
-# gym_app/serializers.py
 from rest_framework import serializers
-from rest_framework_simplejwt.tokens import RefreshToken
-from .models import CustomUser
+from .models import CustomUser, CoachInfo, ManagerInfo
 
-from rest_framework import serializers
-from .models import CustomUser
-
-class CustomUserSerializer(serializers.ModelSerializer):
+class CoachInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomUser
-        fields = '__all__'
+        model = CoachInfo
+        fields = ['gender', 'birthday', 'education', 'language', 'location', 'years_of_experience', 'description']
+
+class ManagerInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ManagerInfo
+        fields = ['gender', 'birthday', 'education', 'language', 'location', 'years_of_experience', 'description']
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    coach_info = CoachInfoSerializer(required=False)
+    manager_info = ManagerInfoSerializer(required=False)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'user_type']
+        fields = ['id', 'username', 'email', 'password', 'user_type', 'coach_info', 'manager_info']
 
     def create(self, validated_data):
-        user = CustomUser.objects.create(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            user_type=validated_data['user_type']
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        coach_info_data = validated_data.pop('coach_info', None)
+        manager_info_data = validated_data.pop('manager_info', None)
 
-class TokenSerializer(serializers.Serializer):
-    refresh = serializers.CharField()
-    access = serializers.CharField()
-    refresh_token = serializers.CharField()
+        user = CustomUser.objects.create(**validated_data)
+
+        if user.user_type == 'coach' and coach_info_data:
+            CoachInfo.objects.create(user=user, **coach_info_data)
+        elif user.user_type == 'manager' and manager_info_data:
+            ManagerInfo.objects.create(user=user, **manager_info_data)
+
+        return user

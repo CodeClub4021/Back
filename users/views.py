@@ -1,12 +1,19 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from django.core.exceptions import PermissionDenied
-from .models import CustomUser
-from .serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import CustomUser
+from .serializers import UserSerializer, ManagerInfoSerializer, CoachInfoSerializer
+
+class CoachInfoEditView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.filter(user_type='coach')
+    serializer_class = CoachInfoSerializer
+    permission_classes = [permissions.IsAuthenticated] 
+
+class ManagerInfoEditView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.filter(user_type='manager')
+    serializer_class = ManagerInfoSerializer
+    permission_classes = [permissions.IsAuthenticated] 
 
 class UserSignUpView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
