@@ -8,9 +8,11 @@ from .models import Gym, Rating
 class GymSerializer(serializers.ModelSerializer):
     manager = serializers.SlugRelatedField(queryset=CustomUser.objects.all(), slug_field='username')
     coaches = serializers.SlugRelatedField(queryset=CustomUser.objects.all(), slug_field='username', many=True)
+    users   = serializers.SlugRelatedField(queryset=CustomUser.objects.all(), slug_field='username', many=True)
+
     class Meta:
         model = Gym
-        fields = ['name', 'address', 'city', 'manager', 'coaches']
+        fields = ['name', 'address', 'city', 'manager', 'coaches', 'users']
 
     def create(self, validated_data):
         coaches_data = validated_data.pop('coaches', [])
@@ -27,6 +29,9 @@ class RatingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 class CoachCreateSerializer(serializers.Serializer):
     coach_username = serializers.CharField()
+
+class UserRegisterSerializer(serializers.Serializer):
+    user_username = serializers.CharField()
 
 
 # from rest_framework import serializers
