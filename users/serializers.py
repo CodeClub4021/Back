@@ -31,3 +31,9 @@ class UserSerializer(serializers.ModelSerializer):
             ManagerInfo.objects.create(user=user, **manager_info_data)
 
         return user
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
+    username     = serializers.CharField(write_only=True, required=True)
