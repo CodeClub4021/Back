@@ -16,8 +16,10 @@ class GymSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         coaches_data = validated_data.pop('coaches')
+        users_data = validated_data.pop('users', [])
         gym = Gym.objects.create(**validated_data)
         gym.coaches.set(coaches_data)
+        gym.users.set(users_data)
         return gym
 
 class RatingSerializer(serializers.ModelSerializer):
