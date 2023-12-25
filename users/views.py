@@ -5,6 +5,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
 from .serializers import UserSerializer, ManagerInfoSerializer, CoachInfoSerializer, ChangePasswordSerializer
 from django.contrib.auth.hashers import check_password
+from django.urls import reverse
+
 
 class CoachInfoEditView(generics.UpdateAPIView):
     queryset = CustomUser.objects.filter(user_type='coach')
@@ -19,6 +21,14 @@ class ManagerInfoEditView(generics.UpdateAPIView):
 class UserSignUpView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        
+        response.data['redirect_url'] = reverse('user-login') 
+
+        return response
+
 class UserLoginView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)

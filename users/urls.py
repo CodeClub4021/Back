@@ -1,4 +1,3 @@
-# gym_app/urls.py
 from django.urls import path
 from .views import UserSignUpView, UserLoginView, CoachInfoEditView, ManagerInfoEditView, ChangePasswordView
 
@@ -10,4 +9,3 @@ urlpatterns = [
     path('manager/edit/', ManagerInfoEditView.as_view(), name='manager-info-edit'),
     path('changepassword', ChangePasswordView.as_view(), name='change-password'),
 ]
-#     path('club/edit_manager/', views.edit_manager, name='edit_manager'),
