@@ -28,6 +28,7 @@ from django.contrib.auth.models import AbstractUser
 
 class CoachInfo(models.Model):
     user = models.OneToOneField('CustomUser', on_delete=models.CASCADE, related_name='coach_info')
+    username = models.CharField(max_length=100)
     gender = models.CharField(max_length=10)
     birthday = models.DateField()
     education = models.CharField(max_length=100)
@@ -38,6 +39,7 @@ class CoachInfo(models.Model):
 
 class ManagerInfo(models.Model):
     user = models.OneToOneField('CustomUser', on_delete=models.CASCADE, related_name='manager_info')
+    username = models.CharField(max_length=100)
     gender = models.CharField(max_length=10)
     birthday = models.DateField()
     education = models.CharField(max_length=100)

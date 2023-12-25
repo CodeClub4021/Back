@@ -4,20 +4,21 @@ from .models import CustomUser, CoachInfo, ManagerInfo
 class CoachInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CoachInfo
-        fields = ['gender', 'birthday', 'education', 'language', 'location', 'years_of_experience', 'description']
+        fields = ['username','gender', 'birthday', 'education', 'language', 'location', 'years_of_experience', 'description']
 
 class ManagerInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ManagerInfo
-        fields = ['gender', 'birthday', 'education', 'language', 'location', 'years_of_experience', 'description']
+        fields = ['username', 'gender', 'birthday', 'education', 'language', 'location', 'years_of_experience', 'description']
 
 class UserSerializer(serializers.ModelSerializer):
-    coach_info = CoachInfoSerializer(required=False)
-    manager_info = ManagerInfoSerializer(required=False)
+    #coach_info = CoachInfoSerializer(required=False)
+    #manager_info = ManagerInfoSerializer(required=False)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'user_type', 'coach_info', 'manager_info']
+        fields = ['id', 'username', 'email', 'password', 'user_type']
+        """,'coach_info', 'manager_info'"""
 
     def create(self, validated_data):
         coach_info_data = validated_data.pop('coach_info', None)
