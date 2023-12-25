@@ -37,6 +37,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('users.urls')),
     url('', include('gyms.urls')),
+    path('', include('mainpage.urls')),
 
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

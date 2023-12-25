@@ -23,8 +23,6 @@ class CustomUser(AbstractUser):
         return None
 
 
-from django.db import models
-from django.contrib.auth.models import AbstractUser
 
 class CoachInfo(models.Model):
     user = models.OneToOneField('CustomUser', on_delete=models.CASCADE, related_name='coach_info')

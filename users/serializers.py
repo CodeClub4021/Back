@@ -24,9 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
         # manager_info_data = validated_data.pop('manager_info', None)
 
         # user = CustomUser.objects.create(**validated_data)
-
-
-
         user = CustomUser.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -40,15 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
              
         return user
-    
-        # user = CustomUser.objects.create(
-        #     username=validated_data['username'],
-        #     email=validated_data['email'],
-        #     user_type=validated_data['user_type']
-        # )
-        # user.set_password(validated_data['password'])
-        # user.save()
-        # return user
 
 
 class ChangePasswordSerializer(serializers.Serializer):

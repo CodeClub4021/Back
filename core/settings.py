@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'users',
     'gyms',
     'coach',
+    'mainpage',
 ]
 
 AUTHENTICATION_BACKENDS = [
