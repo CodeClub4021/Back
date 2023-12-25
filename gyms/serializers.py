@@ -16,9 +16,17 @@ class GymSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         coaches_data = validated_data.pop('coaches')
+        users_data = validated_data.pop('users', [])
         gym = Gym.objects.create(**validated_data)
         gym.coaches.set(coaches_data)
+        gym.users.set(users_data)
         return gym
+    
+class CoachRegistrationSerializer(serializers.Serializer):
+    coach_request = serializers.BooleanField()
+    def post(self, request, gym_id):
+        serializer = CoachRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:

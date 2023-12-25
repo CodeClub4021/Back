@@ -1,11 +1,12 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Gym, Rating
-from .serializers import GymSerializer, RatingSerializer, CoachCreateSerializer, UserRegisterSerializer
+from .serializers import GymSerializer, RatingSerializer, CoachCreateSerializer, UserRegisterSerializer, CoachRegistrationSerializer
 from rest_framework.permissions import IsAuthenticated
 from .forms import GymForm, RatingForm
 from django.shortcuts import get_object_or_404
 from gyms.models import CustomUser
+from rest_framework.views import APIView
 
 
 class GymListCreateView(generics.ListCreateAPIView):
@@ -23,6 +24,28 @@ class RatingCreateView(generics.CreateAPIView):
         gym_pk = self.kwargs.get('pk')
         gym = get_object_or_404(Gym, pk=gym_pk)
         serializer.save(gym=gym)
+
+class CoachRegistrationView(APIView):
+    def post(self, request, gym_id):
+        serializer = CoachRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        coach_request = serializer.validated_data.get('coach_request')
+        user = request.user 
+
+        try:
+            gym = Gym.objects.get(id=gym_id)
+        except Gym.DoesNotExist:
+            return Response({'error': 'Gym not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if coach_request and user.role == 'coach':
+            return Response({'error': 'You are already a coach.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if coach_request and user.role == 'user':
+            gym.coaches.add(user)
+            return Response({'message': 'Coach registration successful.'}, status=status.HTTP_201_CREATED)
+
+        return Response({'error': 'Invalid request for coach registration.'}, status=status.HTTP_400_BAD_REQUEST)
 
 class RatingListView(generics.ListAPIView):
     queryset = Rating.objects.all()
