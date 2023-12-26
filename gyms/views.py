@@ -2,7 +2,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Gym, Rating
 from .serializers import GymSerializer, RatingSerializer, CoachCreateSerializer, UserRegisterSerializer, CoachRegistrationSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .forms import GymForm, RatingForm
 from django.shortcuts import get_object_or_404
 from gyms.models import CustomUser
@@ -55,7 +55,7 @@ class RatingListView(generics.ListAPIView):
 class CoachCreateView(generics.CreateAPIView):
     queryset = Gym.objects.all()
     serializer_class = CoachCreateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         gym_pk = self.kwargs.get('pk')
