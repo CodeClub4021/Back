@@ -1,0 +1,11 @@
+Django==4.2.7
+django-cors-headers==4.3.1
+djangorestframework==3.14.0
+djangorestframework-api-key==3.0.0
+djangorestframework-simplejwt==5.3.1
+drf-yasg==1.21.7
+packaging==23.2
+pip==23.3.1
+PyJWT==2.8.0
+psycopg==3.1.16
+psycopg2==2.9.9

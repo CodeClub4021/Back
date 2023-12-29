@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,7 +121,15 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': os.getenv('DBNAME','CodeClubDB'),
+       'USER': os.getenv('DBUSER','postgres'),
+       'PASSWORD': os.getenv('DBPASS','1234'),
+       'HOST': os.getenv('DBHOST','localhost'),
+       'PORT': os.getenv('DBPORT','5432'),
+   },
+   'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }

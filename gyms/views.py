@@ -50,7 +50,7 @@ class CoachRegistrationView(APIView):
 class RatingListView(generics.ListAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
-    
+  
 
 class CoachCreateView(generics.CreateAPIView):
     queryset = Gym.objects.all()
