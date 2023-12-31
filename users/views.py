@@ -2,6 +2,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import CustomUser
 from .serializers import UserSerializer, ManagerInfoSerializer, CoachInfoSerializer, ChangePasswordSerializer
 from django.contrib.auth.hashers import check_password
@@ -11,12 +12,12 @@ from django.urls import reverse
 class CoachInfoEditView(generics.UpdateAPIView):
     queryset = CustomUser.objects.filter(user_type='coach')
     serializer_class = CoachInfoSerializer
-    permission_classes = [permissions.IsAuthenticated] 
+    permission_classes = [AllowAny] 
 
 class ManagerInfoEditView(generics.UpdateAPIView):
     queryset = CustomUser.objects.filter(user_type='manager')
     serializer_class = ManagerInfoSerializer
-    permission_classes = [permissions.IsAuthenticated] 
+    permission_classes = [AllowAny] 
 
 class UserSignUpView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -45,7 +46,7 @@ class UserLoginView(TokenObtainPairView):
 class ChangePasswordView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = ChangePasswordSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
