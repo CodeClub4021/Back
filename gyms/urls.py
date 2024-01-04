@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import GymListCreateView, GymDetailView, RatingCreateView, RatingListView, CoachCreateView, GymRegisteration
+from .views import GymListCreateView, GymDetailView, RatingCreateView, RatingListView, CoachCreateView, GymRegisteration, GetGymByManagerView
 
 urlpatterns = [
     path('gyms/', GymListCreateView.as_view(), name='gym-list-create'),
@@ -8,6 +8,7 @@ urlpatterns = [
     path('ratings/', RatingListView.as_view(), name='rating-list'),
     path('gyms/<int:pk>/add-coach/', CoachCreateView.as_view(), name='add-coach'),
     path('gyms/<int:pk>/users-reg/', GymRegisteration.as_view(), name='users-reg'),
+    path('gyms/by-manager/', GetGymByManagerView.as_view(), name='gym-by-manager'),
 
 ]
 

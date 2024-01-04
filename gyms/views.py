@@ -2,11 +2,25 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Gym, Rating
 from .serializers import GymSerializer, RatingSerializer, CoachCreateSerializer, UserRegisterSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .forms import GymForm, RatingForm
 from django.shortcuts import get_object_or_404
 from gyms.models import CustomUser
 
+
+class GetGymByManagerView(generics.RetrieveAPIView):
+    queryset = Gym.objects.all()
+    serializer_class = GymSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        id = self.request.query_params.get("manager_id")
+
+        queryset = self.get_queryset()
+        filter = {"manager_id": id}
+
+        obj = get_object_or_404(queryset, **filter)
+        return obj
 
 class GymListCreateView(generics.ListCreateAPIView):
     queryset = Gym.objects.all()
