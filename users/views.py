@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.core.exceptions import PermissionDenied
 from .models import CustomUser
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CustomUserUpdateSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -22,3 +22,31 @@ class UserLoginView(TokenObtainPairView):
             response.data['refresh_token'] = str(refresh_token.access_token)
 
         return response
+
+
+class UpdateAgeView(generics.CreateAPIView):
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = CustomUserUpdateSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateLocationView(generics.CreateAPIView):
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = CustomUserUpdateSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateLanguageView(generics.CreateAPIView):
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = CustomUserUpdateSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

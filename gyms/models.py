@@ -1,5 +1,7 @@
 from django.db import models
 from users.models import CustomUser
+from django.utils import timezone
+
 
 
 class Gym(models.Model):
@@ -20,8 +22,30 @@ class Rating(models.Model):
 
     def __str__(self):
         return f'{self.gym.name} - {self.rating}'
+    
 
 
+
+class GymComment(models.Model):
+    gym = models.ForeignKey('Gym', on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.gym.name} - {self.created_at}"
+
+
+
+class GymProgram(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    exercises = models.TextField()  # Store exercises as a comma-separated string
+
+    def __str__(self):
+        return self.name
+    
+    
 
 # # from django.db import models
 # # from users.models import CustomUser  

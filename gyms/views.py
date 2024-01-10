@@ -1,11 +1,11 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Gym, Rating
-from .serializers import GymSerializer, RatingSerializer, CoachCreateSerializer, UserRegisterSerializer
+from .serializers import GymSerializer, RatingSerializer, CoachCreateSerializer, UserRegisterSerializer, GymCommentSerializer, GymProgramSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .forms import GymForm, RatingForm
 from django.shortcuts import get_object_or_404
-from gyms.models import CustomUser
+from gyms.models import CustomUser, GymComment, GymProgram
 
 
 class GetGymByManagerView(generics.RetrieveAPIView):
@@ -78,6 +78,36 @@ class GymRegisteration(generics.CreateAPIView):
 
         gym.users.add(user)
         return Response({"detail": "You registered to this gym succesfully."}, status=status.HTTP_201_CREATED)
+    
+
+class GymCommentListCreateView(generics.ListCreateAPIView):
+    queryset = GymComment.objects.all()
+    serializer_class = GymCommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class GymProgramRecommendationView(generics.ListAPIView):
+    serializer_class = GymProgramSerializer
+
+    def get_queryset(self):
+        weight = self.request.query_params.get('weight')
+        height = self.request.query_params.get('height')
+
+        # Example logic for gym program recommendations based on weight and height
+        programs = []
+
+        if weight and height:
+            if int(weight) < 70 and int(height) < 170:
+                programs = GymProgram.objects.filter(name__in=['Beginner Program', 'Weight Loss Program'])
+            elif 70 <= int(weight) <= 90 and 170 <= int(height) <= 180:
+                programs = GymProgram.objects.filter(name__in=['Intermediate Program', 'Strength Training Program'])
+            elif int(weight) > 90 and int(height) > 180:
+                programs = GymProgram.objects.filter(name__in=['Advanced Program', 'Muscle Building Program'])
+
+        return programs
 
 
 # # from rest_framework import generics, permissions, status

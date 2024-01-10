@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Gym
 from rest_framework import serializers
 from users.serializers import CustomUser
-from .models import Gym, Rating
+from .models import Gym, Rating, GymComment, GymProgram
 
 
 class GymSerializer(serializers.ModelSerializer):
@@ -29,6 +29,18 @@ class CoachCreateSerializer(serializers.Serializer):
 
 class UserRegisterSerializer(serializers.Serializer):
     user_username = serializers.CharField()
+
+
+class GymCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GymComment
+        fields = ['id', 'gym', 'user', 'comment', 'created_at']
+
+
+class GymProgramSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GymProgram
+        fields = ['id', 'name', 'description', 'exercises']
 
 
 # from rest_framework import serializers
