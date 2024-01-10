@@ -11,7 +11,7 @@ class CustomUser(AbstractUser):
     user_type = models.CharField(max_length=10, choices=USER_TYPES)
     groups = models.ManyToManyField('auth.Group', related_name='customuser_set', blank=True, verbose_name='groups')
     user_permissions = models.ManyToManyField('auth.Permission', related_name='customuser_set', blank=True, verbose_name='user permissions')
-
+    
     def get_coach_info(self):
         if self.user_type == 'coach':
             return self.coach_info
