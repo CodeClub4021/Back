@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from gyms.models import Gym, Rating
 from .serializers import GymFilterSerializer
+from .serializers import UserSerializer
+from users.models import CustomUser
+
 
 class GymFilterView(APIView):
     def get(self, request):
@@ -25,3 +28,20 @@ class GymFilterView(APIView):
 
         gym_data = [{'name': gym.name, 'city': gym.city, 'rating': gym.get_average_rating()} for gym in gyms]
         return Response(gym_data, status=status.HTTP_200_OK)
+class AdminUserInfoView(APIView):
+    def get(self, request, user_id):
+        try:
+            user = CustomUser.objects.get(pk=user_id)
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "CustomUser not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class CoachUserInfoView(APIView):
+    def get(self, request, user_id):
+        try:
+            user = CustomUser.objects.get(pk=user_id)
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "CustomUser not found"}, status=status.HTTP_404_NOT_FOUND)
