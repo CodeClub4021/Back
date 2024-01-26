@@ -8,10 +8,8 @@ pip install django-rest-authtoken
 pip install drf-yasg
 
 
-pip install djangorestframework
 pip install djangorestframework-api-key
 pip install djangorestframework-simplejwt
-pip install drf-yasg
 pip install django-cors-headers
 
 
