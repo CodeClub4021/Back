@@ -4,5 +4,11 @@
     "django": {
         "pythonVersion": "3.11"
     },
-    "port":"8000"
+    "port":"8000",
+    "disks" :[
+        {
+            "name": "sqlite",
+            "mountTo": "data"
+        }
+    ]
 }
