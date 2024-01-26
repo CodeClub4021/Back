@@ -8,7 +8,7 @@ from gymlist.models import Manager
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'phone', 'role', 'password')
+        fields = ('id', 'email', 'username', 'role', 'password')
         extra_kwargs = {'password': {'write_only': True}}
     
     def create(self, validated_data):
