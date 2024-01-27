@@ -69,6 +69,7 @@ class RegistrationView(generics.CreateAPIView):
             else:
                 user.delete()
                 return Response(coach_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        response_data = {'id': user.id, **serializer.data}
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
