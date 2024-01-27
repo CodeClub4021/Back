@@ -1,11 +1,7 @@
-from gymlist.models import Gym
-from gymlist.models import User
-from gymlist.serializers import GymSerializer
-from gymlist.serializers import UserSerializer
-from gymlist.serializers import CustomerSerializer
-from gymlist.serializers import CoachSerializer
-from gymlist.serializers import ManagerSerializer
+from .models import User, Gym, Customer, Coach, Manager
+from .serializers import UserSerializer, GymSerializer, CustomerSerializer, CoachSerializer, ManagerSerializer, CustomerGymJoinSerializer
 from gymlist.permissions import IsManagerAndOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import generics
 from rest_framework.response import Response
@@ -15,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.views import APIView
 
 
 class GymList(generics.ListCreateAPIView):
@@ -41,8 +38,11 @@ class GymDetail(generics.RetrieveUpdateDestroyAPIView):
 class RegistrationView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = UserSerializer
-       
-    def perform_create(self, serializer):
+
+     
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         user = serializer.save()
         role = serializer.validated_data.get('role')
 
@@ -69,7 +69,6 @@ class RegistrationView(generics.CreateAPIView):
             else:
                 user.delete()
                 return Response(coach_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        response_data = {'id': user.id, **serializer.data}
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -90,3 +89,59 @@ class LoginView(ObtainAuthToken):
             return Response({'token': token.key})
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class CurrentUser(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            user = request.user
+            related_model = None
+            related_serializer = None
+
+            if user.role == 'customer':
+                related_model = Customer.objects.get(user=user)
+                related_serializer = CustomerSerializer(related_model)
+            elif user.role == 'coach':
+                related_model = Coach.objects.get(user=user)
+                related_serializer = CoachSerializer(related_model)
+            elif user.role == 'manager':
+                related_model = Manager.objects.get(user=user)
+                related_serializer = ManagerSerializer(related_model)
+
+            user_serializer = UserSerializer(user)
+
+            return Response({'user': user_serializer.data, user.role: related_serializer.data if related_model else None}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED) 
+
+class CustomerList(generics.ListAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+class ManagerList(generics.ListAPIView):
+    queryset = Manager.objects.all()
+    serializer_class = ManagerSerializer
+
+class CoachList(generics.ListAPIView):
+    queryset = Coach.objects.all()
+    serializer_class = CoachSerializer
+
+
+class CustomerJoinGymView(generics.CreateAPIView):
+    serializer_class = CustomerGymJoinSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        return Response({"detail": "You have successfully joined the gym."}, status=status.HTTP_201_CREATED)
+
+class CustomerJoinedGymsView(generics.ListAPIView):
+    serializer_class = GymSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        customer = Customer.objects.get(user=self.request.user)
+        return customer.gyms.all()
