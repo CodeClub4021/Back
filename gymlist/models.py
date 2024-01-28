@@ -20,6 +20,8 @@ class Customer(models.Model):
     coaches = models.ManyToManyField('Coach', related_name='my_customers')
     gyms = models.ManyToManyField('Gym', related_name='memberships')
 
+    wallet = models.DecimalField(max_digits=10, decimal_places=2, default=100.00)
+
     phone_number = models.CharField(max_length=15, null=True)
     sex = models.CharField(max_length=10, null=True)
     birthday = models.DateField(null=True)
@@ -112,7 +114,9 @@ class Gym(models.Model):
     sex = models.CharField(max_length=10, null=True)
     since = models.DateField(null=True)
     work_hours = models.CharField(max_length=255, null=True)
-    tuition = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    tier1_tuition = models.DecimalField(max_digits=10, decimal_places=2, default=10.00)
+    tier2_tuition = models.DecimalField(max_digits=10, decimal_places=2, default=20.00)
+    tier3_tuition = models.DecimalField(max_digits=10, decimal_places=2, default=30.00)
     phone_number = models.CharField(max_length=15, null=True)
 
     def __str__(self):
