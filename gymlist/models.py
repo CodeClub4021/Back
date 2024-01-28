@@ -17,8 +17,6 @@ class User(AbstractUser):
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    coaches = models.ManyToManyField('Coach', related_name='my_customers')
-    gyms = models.ManyToManyField('Gym', related_name='memberships')
 
     wallet = models.DecimalField(max_digits=10, decimal_places=2, default=100.00)
 
@@ -49,8 +47,6 @@ class Customer(models.Model):
 class Coach(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    gyms = models.ManyToManyField('Gym', related_name='gym_coaches')
-    customers = models.ManyToManyField(Customer, related_name='my_coaches')
 
     phone_number = models.CharField(max_length=15, null=True)
     sex = models.CharField(max_length=10, null=True)
@@ -108,8 +104,8 @@ class Gym(models.Model):
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=255, default='Tehran')
     manager = models.OneToOneField(Manager, on_delete=models.CASCADE)
-    coaches = models.ManyToManyField(Coach)
-    customers = models.ManyToManyField(Customer)
+    coaches = models.ManyToManyField(Coach, related_name="gyms")
+    customers = models.ManyToManyField(Customer, related_name="gyms")
 
     sex = models.CharField(max_length=10, null=True)
     since = models.DateField(null=True)

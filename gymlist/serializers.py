@@ -5,6 +5,11 @@ from gymlist.models import Customer
 from gymlist.models import Coach 
 from gymlist.models import Manager 
 
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -35,6 +40,17 @@ class GymSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gym
         fields = ['id', 'name', 'address', 'city', 'sex', 'since', 'work_hours', 'tier1_tuition', 'tier2_tuition', 'tier3_tuition', 'phone_number']
+        
+    def to_representation(self, instance):
+        customer_count = instance.customers.count()
+        coach_count = instance.coaches.count()
+
+        data = super().to_representation(instance)
+
+        data['customer_count'] = customer_count
+        data['coach_count'] = coach_count
+
+        return data
 
 class CustomerGymJoinSerializer(serializers.Serializer):
     gym_id = serializers.PrimaryKeyRelatedField(queryset=Gym.objects.all())
@@ -45,3 +61,12 @@ class CustomerGymJoinSerializer(serializers.Serializer):
         customer, created = Customer.objects.get_or_create(user=user)
         customer.gyms.add(gym)
         return customer
+
+class CoachGymJoinSerializer(serializers.Serializer):
+    gym_id = serializers.PrimaryKeyRelatedField(queryset=Gym.objects.all())
+    def create(self, validated_data):
+        user = self.context['request'].user
+        gym = validated_data['gym_id']
+        coach, created = Coach.objects.get_or_create(user=user)
+        coach.gyms.add(gym)
+        return coach
