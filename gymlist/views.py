@@ -117,6 +117,31 @@ class CustomerList(generics.ListAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
+class CustomerUpdateView(generics.UpdateAPIView):
+    serializer_class = CustomerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+
+        if user.role != 'customer':
+            return None
+
+        customer, created = Customer.objects.get_or_create(user=user)
+        return customer
+
+    def update(self, request, *args, **kwargs):
+        customer = self.get_object()
+
+        if not customer:
+            return Response({"error": "You must have the 'customer' role to update your information."}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(customer, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({"detail": "Your information has been updated successfully.", "customer" : serializer.data}, status=status.HTTP_200_OK)
+
 class ManagerList(generics.ListAPIView):
     queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
@@ -128,15 +153,42 @@ class CoachList(generics.ListAPIView):
 
 class CustomerJoinGymView(generics.CreateAPIView):
     serializer_class = CustomerGymJoinSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        serializer.save()
+        gym = serializer.validated_data['gym_id']
+        selected_tier = serializer.validated_data.get('selected_tier', 1)  # Default to tier 1 if not provided
 
-        return Response({"detail": "You have successfully joined the gym."}, status=status.HTTP_201_CREATED)
+        user = self.request.user
+        customer, created = Customer.objects.get_or_create(user=user)
+
+        if (
+            not customer.phone_number or
+            not customer.sex or
+            not customer.birthday or
+            not customer.education or
+            not customer.language or
+            not customer.location or
+            not customer.work_experience or
+            not customer.full_name or
+            not customer.more_description
+        ):
+            return Response({"error": "Please complete all fields in your profile before joining the gym."}, status=status.HTTP_400_BAD_REQUEST)
+
+        tier_field_name = f'tier{selected_tier}_tuition'
+        tier_tuition = getattr(gym, tier_field_name)
+        if customer.wallet < tier_tuition:
+            return Response({"error": "Insufficient wallet balance to join the selected tier."}, status=status.HTTP_400_BAD_REQUEST)
+
+        customer.wallet -= tier_tuition
+        customer.save()
+
+        customer.gyms.add(gym)
+
+        return Response({"detail": f"You have successfully joined the gym with Tier {selected_tier}."}, status=status.HTTP_201_CREATED)
 
 class CustomerJoinedGymsView(generics.ListAPIView):
     serializer_class = GymSerializer

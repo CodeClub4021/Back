@@ -13,6 +13,7 @@ urlpatterns = [
     path('user/', views.CurrentUser.as_view()),
     path('customer/join-gym/', views.CustomerJoinGymView.as_view()),
     path('customer/joined-gyms/', views.CustomerJoinedGymsView.as_view()),
+    path('customer/update/', views.CustomerUpdateView.as_view()),
 ]
 
 

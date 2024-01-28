@@ -34,11 +34,11 @@ class ManagerSerializer(serializers.ModelSerializer):
 class GymSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gym
-        fields = ['id', 'name', 'address', 'city', 'sex', 'since', 'work_hours', 'tuition', 'phone_number']
+        fields = ['id', 'name', 'address', 'city', 'sex', 'since', 'work_hours', 'tier1_tuition', 'tier2_tuition', 'tier3_tuition', 'phone_number']
 
 class CustomerGymJoinSerializer(serializers.Serializer):
     gym_id = serializers.PrimaryKeyRelatedField(queryset=Gym.objects.all())
-
+    selected_tier = serializers.IntegerField(required=False)
     def create(self, validated_data):
         user = self.context['request'].user
         gym = validated_data['gym_id']
