@@ -13,7 +13,12 @@ urlpatterns = [
     path('user/', views.CurrentUser.as_view()),
     path('customer/join-gym/', views.CustomerJoinGymView.as_view()),
     path('customer/joined-gyms/', views.CustomerJoinedGymsView.as_view()),
+    path('coach/join-gym/', views.CoachJoinGymView.as_view()),
+    path('coach/joined-gyms/', views.CoachJoinedGymsView.as_view()),
     path('customer/update/', views.CustomerUpdateView.as_view()),
+    path('manager/update/', views.ManagerUpdateView.as_view()),
+    path('coach/update/', views.CoachUpdateView.as_view()),
+    path('change-password/', views.PasswordChangeView.as_view()),
 ]
 
 
