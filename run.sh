@@ -9,5 +9,4 @@ pip install djangorestframework-simplejwt
 pip install drf-yasg
 pip install django-cors-headers
 
-
 python manage.py runserver 

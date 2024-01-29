@@ -1,8 +1,0 @@
-{
-    "platform": "django",
-    "app": "codeclub-api",
-    "django": {
-        "pythonVersion": "3.11"
-    },
-    "port":"8000"
-}
