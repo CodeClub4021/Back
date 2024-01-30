@@ -22,3 +22,4 @@ class IsManagerAndOwnerOrReadOnly(permissions.BasePermission):
             return True
 
         return request.user.role == 'manager' and request.user.manager and obj.manager == request.user.manager
+    # Done

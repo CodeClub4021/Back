@@ -75,11 +75,9 @@ class GymRatingCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         customer = self.request.user
 
-        # Check if the user has a customer role
         if customer.role != 'customer':
             raise ValidationError("Only customers can rate gyms.")
 
-        # Get the gym and check if the customer is a member
         gym_id = self.request.data.get('gym_id', None)
         rating = self.request.data.get('rating', 5)
         
@@ -419,3 +417,38 @@ class CoachJoinedGymsView(generics.ListAPIView):
     def get_queryset(self):
         coach = Coach.objects.get(user=self.request.user)
         return coach.gyms.all()
+    
+
+class RemoveUserFromGymView(generics.UpdateAPIView):
+    queryset = Gym.objects.all()
+    serializer_class = GymSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        user_id = request.data.get('user_id', None)
+
+        if not user_id:
+            return Response({'error': 'user_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            manager = Manager.objects.get(user=request.user)
+        except Manager.DoesNotExist:
+            return Response({'error': 'You are not authorized to manage gyms.'}, status=status.HTTP_403_FORBIDDEN)
+
+        manager_gym = manager.gym
+        if(not manager.gym):
+            return Response({'error': 'You dont have a gym'}, status=status.HTTP_400_FORBIDDEN)
+
+        if user.role == 'coach':
+            manager_gym.coaches.remove(user.coach)
+        elif user.role == 'customer':
+            manager_gym.customers.remove(user.customer)
+
+        manager_gym.refresh_from_db()
+        return Response({'message': 'User removed from the gym successfully.'}, status=status.HTTP_200_OK)
+    # Done

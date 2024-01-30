@@ -43,7 +43,7 @@ class GymSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gym
-        fields = ['id', 'name', 'address', 'city', 'sex', 'since', 'work_hours', 'tier1_tuition', 'tier2_tuition', 'tier3_tuition', 'phone_number', 'average_rating']
+        fields = ['id', 'name', 'address', 'city', 'sex', 'since', 'work_hours', 'tier1_tuition', 'tier2_tuition', 'tier3_tuition', 'phone_number', 'more_description', 'program1', 'program2', 'program3', 'program4', 'average_rating']
         
     def to_representation(self, instance):
         customer_count = instance.customers.count()
@@ -88,3 +88,4 @@ class CoachGymJoinSerializer(serializers.Serializer):
         coach, created = Coach.objects.get_or_create(user=user)
         coach.gyms.add(gym)
         return coach
+# Done

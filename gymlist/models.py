@@ -115,6 +115,12 @@ class Gym(models.Model):
     tier2_tuition = models.DecimalField(max_digits=10, decimal_places=2, default=20.00)
     tier3_tuition = models.DecimalField(max_digits=10, decimal_places=2, default=30.00)
     phone_number = models.CharField(max_length=15, null=True)
+    more_description = models.TextField(null=True)
+    
+    program1 = models.TextField(null=True)
+    program2 = models.TextField(null=True)
+    program3 = models.TextField(null=True)
+    program4 = models.TextField(null=True)
     
     def calculate_average_rating(self):
         ratings = self.ratings.all()
@@ -149,3 +155,4 @@ class CoachRating(models.Model):
 
     def __str__(self):
         return f'{self.customer.username} - {self.coach.user.username} - {self.rating}'
+# Done

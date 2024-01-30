@@ -59,3 +59,4 @@ class ChangePasswordView(generics.UpdateAPIView):
         user.save()
 
         return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
+# Done

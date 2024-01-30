@@ -23,8 +23,10 @@ urlpatterns = [
     path('customer/rate-coach', views.CoachRatingCreateView.as_view()),
     path('manager/list-coaches', views.CompletedInfoCoachListView.as_view()),
     path('gym/<int:pk>/add-coach/', views.AddCoachToGymView.as_view()),
+    path('gym/remove-user/', views.RemoveUserFromGymView.as_view()),
 ]
 
 
 
 urlpatterns = format_suffix_patterns(urlpatterns)
+# Done

@@ -6,3 +6,4 @@ urlpatterns = [
     path('mainpage/user/<int:user_id>/', AdminUserInfoView.as_view(), name='admin_user_info'),
     path('mainpage/user/<int:user_id>/', CoachUserInfoView.as_view(), name='coach_user_info'),
 ]
+# Done
